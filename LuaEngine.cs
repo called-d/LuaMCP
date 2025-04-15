@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using static LuaMCP.Utils;
 using System.Text.Json.Nodes;
 using System.Text.Json;
-using ModelContextProtocol.Server;
 
 namespace LuaMCP {
     static class LuaStateExtension {
