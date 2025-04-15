@@ -85,7 +85,7 @@ namespace LuaMCP {
                             i = i + 1
                         end
                     end
-                    return t
+                    return table.unpack(t)
                 end
             ");
             var array = L.PopValues(lua_gettop(L) - stackTop);
