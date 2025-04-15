@@ -69,6 +69,34 @@ namespace LuaMCP {
             return JsonSerializer.Serialize(arr, _jsonSerializerOptions);
         }
 
+        public string[] GetListGlobals(bool filter) {
+            var stackTop = lua_gettop(L);
+            var filter_ = filter
+                ? "local filter = { getmetatable = true, utf8 = true, math = true, pairs = true, tonumber = true, error = true, rawlen = true, table = true, rawget = true, select = true, print = true, setmetatable = true, assert = true, require = true, pcall = true, ipairs = true, xpcall = true, os = true, _VERSION = true, rawset = true, _G = true, package = true, rawequal = true, type = true, io = true, tostring = true, load = true, next = true, coroutine = true, string = true, warn = true, collectgarbage = true };"
+                : " local filter = {};";
+            luaL_dostring(L, $@"
+                do
+                    {filter_}
+                    local t = {{}}
+                    local i = 1
+                    for k, v in pairs(_G) do
+                        if not filter[k] then
+                            t[i] = k
+                            i = i + 1
+                        end
+                    end
+                    return t
+                end
+            ");
+            var array = L.PopValues(lua_gettop(L) - stackTop);
+            var result = new string[array.Length];
+            for (int i = 0; i < array.Length; i++) {
+                if (array[i] is string str) result[i] = str;
+                else result[i] = array[i]?.ToString() ?? "nil";
+            }
+            return result;
+        }
+
         private void OpenLibs() {
             // base 基本ライブラリ
             luaL_requiref(L, LUA_GNAME, luaopen_base, 1); lua_pop(L, 1);
