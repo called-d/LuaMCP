@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
 using System.ComponentModel;
@@ -60,8 +59,8 @@ namespace LuaMCP {
                 return JsonSerializer.Serialize(new JsonArray([null, ex.Message]));
             }
         }
-        [McpServerTool, Description("get global variable list")]
-        public static async Task<string[]> ListGlobals(IServiceProvider services, [Description("not filter libraries and misc")] bool noFilter = false)
+        [McpServerTool(Destructive = false, ReadOnly = true), Description("get global variable list")]
+        public static string[] ListGlobals(IServiceProvider services, [Description("not filter libraries and misc")] bool noFilter = false)
         {
             var luaEngine = services.GetRequiredService<LuaEngine>();
             return luaEngine.GetListGlobals(!noFilter);
