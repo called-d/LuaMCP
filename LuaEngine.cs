@@ -19,7 +19,7 @@ namespace LuaMCP {
         }
     }
 
-    class LuaEngine: IDisposable {
+    public class LuaEngine: IDisposable {
 #region limitations
         private static bool _allowRequireDll = false;
         private static bool _allowLoadlib = false;
