@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Lua.NET" Version="5.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
+    <PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.8" />
+  </ItemGroup>
+
 </Project>
