@@ -40,8 +40,8 @@ namespace LuaMCP {
         public static async Task<CallToolResponse> EvalLuaCode(
             IMcpServer server,
             IServiceProvider services,
-            [Description("session id to specify lua environment. To create new environment, keep it empty")] string? sessionId,
-            [Description("lua source code to eval")] string code
+            [Description("lua source code to eval")] string code,
+            [Description("session id to specify lua environment. To create new environment, keep it empty")] string? sessionId = null
         )
         {
             await server.SendNotificationAsync("eval", new {
