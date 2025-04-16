@@ -95,11 +95,11 @@ namespace LuaMCP {
         public static string[] ListGlobals(
             IServiceProvider services,
             [Description("session id to specify lua environment")] string sessionId,
-            [Description("not filter libraries and misc")] bool noFilter = false
+            [Description("include libraries and misc like _G, _VERSION, ...")] bool includeMisc = false
         )
         {
             var luaEngine = services.GetRequiredService<VMPool>().GetOrCreate(sessionId, out _);
-            return luaEngine.GetListGlobals(!noFilter);
+            return luaEngine.GetListGlobals(!includeMisc);
         }
     }
 }
