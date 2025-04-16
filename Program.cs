@@ -47,11 +47,13 @@ namespace LuaMCP {
             await server.SendNotificationAsync("eval", new {
                 Code = code,
             });
-            var luaEngine = services.GetRequiredService<VMPool>().GetOrCreate(sessionId, out var sessionId_);
-            var printCalls = new JsonArray();
+            var pool = services.GetRequiredService<VMPool>();
+            var luaEngine = pool.GetOrCreate(sessionId = pool.PrepareId(sessionId));
+            var printed = new JsonArray();
             LuaEngine.onPrint = async (args) => {
                 var arr = new JsonArray();
                 foreach (var arg in args) arr.Add(arg);
+                printed.Add(arr);
                 await server.SendNotificationAsync("print", new {
                     Args = JsonSerializer.Serialize(arr),
                 });
@@ -63,10 +65,7 @@ namespace LuaMCP {
                             Text = luaEngine.Call(code, []),
                         },
                         new Content {
-                            Text = JsonSerializer.Serialize(new {
-                                sessionId = sessionId_,
-                                printed = printCalls,
-                            }),
+                            Text = JsonSerializer.Serialize(new { sessionId, printed }),
                         },
                     ],
                 };
@@ -81,10 +80,7 @@ namespace LuaMCP {
                             Text = JsonSerializer.Serialize(new JsonArray([null, ex.Message]))
                         },
                         new Content {
-                            Text = JsonSerializer.Serialize(new {
-                                sessionId = sessionId_,
-                                printed = printCalls,
-                            }),
+                            Text = JsonSerializer.Serialize(new { sessionId, printed }),
                         }
                     ],
                     IsError = true,
@@ -94,11 +90,12 @@ namespace LuaMCP {
         [McpServerTool(Destructive = false, ReadOnly = true), Description("get global variable list")]
         public static string[] ListGlobals(
             IServiceProvider services,
-            [Description("session id to specify lua environment")] string sessionId,
-            [Description("include libraries and misc like _G, _VERSION, ...")] bool includeMisc = false
+            [Description("session id to specify lua environment")] string? sessionId = null,
+            [Description("include libraries and misc like _G, _VERSION, ... . default is false; recommended.")] bool includeMisc = false
         )
         {
-            var luaEngine = services.GetRequiredService<VMPool>().GetOrCreate(sessionId, out _);
+            var pool = services.GetRequiredService<VMPool>();
+            var luaEngine = pool.GetOrCreate(pool.PrepareId(sessionId));
             return luaEngine.GetListGlobals(!includeMisc);
         }
     }

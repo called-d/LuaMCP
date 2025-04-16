@@ -3,15 +3,14 @@ namespace LuaMCP {
     {
         private readonly Dictionary<string, LuaEngine> _luaEngines = [];
 
-        public LuaEngine GetOrCreate(string? name, out string name_)
+        public string PrepareId(string? id) => id switch {
+            string s when s.Trim().Length > 0 => s,
+            _ => Guid.NewGuid().ToString() // whitespace/empty string or null
+        };
+        public LuaEngine GetOrCreate(string name)
         {
-            if (name == "") name = null;
-            name_ = name ??= Guid.NewGuid().ToString();
             if (_luaEngines.TryGetValue(name, out var engine)) return engine;
-
-            var newEngine = new LuaEngine();
-            _luaEngines[name] = newEngine;
-            return newEngine;
+            return _luaEngines[name] = new LuaEngine();
         }
 
         public void Dispose()
