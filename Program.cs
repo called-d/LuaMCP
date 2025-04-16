@@ -48,6 +48,7 @@ namespace LuaMCP {
                 Code = code,
             });
             var luaEngine = services.GetRequiredService<VMPool>().GetOrCreate(sessionId, out var sessionId_);
+            var printCalls = new JsonArray();
             LuaEngine.onPrint = async (args) => {
                 var arr = new JsonArray();
                 foreach (var arg in args) arr.Add(arg);
@@ -64,6 +65,7 @@ namespace LuaMCP {
                         new Content {
                             Text = JsonSerializer.Serialize(new {
                                 sessionId = sessionId_,
+                                printed = printCalls,
                             }),
                         },
                     ],
@@ -81,6 +83,7 @@ namespace LuaMCP {
                         new Content {
                             Text = JsonSerializer.Serialize(new {
                                 sessionId = sessionId_,
+                                printed = printCalls,
                             }),
                         }
                     ],
